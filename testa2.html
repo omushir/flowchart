@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Flow Diagram</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      overflow: hidden;
+    }
+
+    .diagram-container {
+      position: relative;
+      width: 90%;
+      height: 90%;
+    }
+
+    .box {
+      position: absolute;
+      background-color: #4CAF50;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 5px;
+      text-align: center;
+      font-size: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .arrow {
+      stroke: #4CAF50;
+      stroke-width: 2;
+      fill: none;
+      marker-end: url(#arrowhead);
+    }
+
+    @media (max-width: 768px) {
+      .box {
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .box {
+        font-size: 0.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="diagram-container">
+    <!-- Boxes will be dynamically generated -->
+    <div id="boxes"></div>
+
+    <!-- SVG for arrows -->
+    <svg>
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#4CAF50" />
+        </marker>
+      </defs>
+      <g id="arrows"></g>
+    </svg>
+  </div>
+
+  <script>
+    // Define box positions and sizes as percentages
+    const customPositions = [
+      // Level 1 (4 boxes)
+      { id: 'box1', left: '5%', top: '10%', text: 'Box 1', width: '10%', height: '10%' },
+      { id: 'box2', left: '20%', top: '10%', text: 'Box 2', width: '10%', height: '10%' },
+      { id: 'box3', left: '35%', top: '10%', text: 'Box 3', width: '10%', height: '10%' },
+      { id: 'box5', left: '5%', top: '30%', text: 'Box 8(5)', width: '10%', height: '10%' },
+      { id: 'box6', left: '50%', top: '10%', text: 'Box 4', width: '10%', height: '10%' },
+      { id: 'box7', left: '65%', top: '10%', text: 'Box 5', width: '10%', height: '10%' },
+      { id: 'box8', left: '80%', top: '10%', text: 'Box 6', width: '10%', height: '10%' },
+      { id: 'box9', left: '95%', top: '10%', text: 'Box 7', width: '10%', height: '10%' },
+      { id: 'box10', left: '5%', top: '50%', text: 'Box 8(5)', width: '10%', height: '10%' }
+    ];
+
+    const container = document.querySelector(".diagram-container");
+    const boxesContainer = document.getElementById("boxes");
+    const arrowsContainer = document.getElementById("arrows");
+
+    // Helper function to get the center of an element
+    function getCenter(element) {
+      const rect = element.getBoundingClientRect();
+      const parentRect = element.parentElement.getBoundingClientRect();
+      return {
+        x: rect.left + rect.width / 2 - parentRect.left,
+        y: rect.top + rect.height / 2 - parentRect.top
+      };
+    }
+
+    // Function to generate boxes and arrows
+    function generateBoxesAndArrows() {
+      customPositions.forEach((pos) => {
+        const box = document.createElement("div");
+        box.classList.add("box");
+        box.id = pos.id;
+        box.innerText = pos.text;
+        box.style.width = pos.width;
+        box.style.height = pos.height;
+        box.style.left = pos.left;
+        box.style.top = pos.top;
+
+        boxesContainer.appendChild(box);
+      });
+
+      // Draw arrows
+      const box1 = document.getElementById("box1");
+      const box2 = document.getElementById("box2");
+      const box3 = document.getElementById("box3");
+      const box5 = document.getElementById("box5");
+
+      // Arrow: Box 1 to Box 2
+      const arrow1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      const box1Center = getCenter(box1);
+      const box2Center = getCenter(box2);
+
+      const path1 = `M${box1Center.x},${box1Center.y} 
+                     L${box2Center.x-50},${box2Center.y}`;
+      arrow1.setAttribute("d", path1);
+      arrow1.classList.add("arrow");
+      arrowsContainer.appendChild(arrow1);
+
+      // Arrow: Box 2 to Box 3
+      const arrow2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      
+      const box3Center = getCenter(box3);
+
+      const path2 = `M${box2Center.x},${box2Center.y} 
+                     L${box3Center.x-50},${box3Center.y}`;
+      arrow2.setAttribute("d", path2);
+      arrow2.classList.add("arrow");
+      arrowsContainer.appendChild(arrow2);
+
+      // Arrow: Box 5 to Box 3
+       const arrow3 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      
+      const box5Center = getCenter(box5);
+  
+      const path3 = `M${box5Center.x },${box5Center.y} 
+                     L${box3Center.x},${box5Center.y} 
+                     L${box3Center.x},${box3Center.y + box3.offsetHeight / 2}`;
+      arrow3.setAttribute("d", path3);
+      arrow3.classList.add("arrow");
+      arrowsContainer.appendChild(arrow3);
+  
+
+
+      // Arrow: Box 3 to Box 6
+        const arrow4 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        const box6Center = getCenter(box6);
+
+        const path4 = `M${box3Center.x},${box3Center.y} 
+                    L${box6Center.x-50},${box6Center.y}`;
+        arrow4.setAttribute("d", path4);
+        arrow4.classList.add("arrow");
+        arrowsContainer.appendChild(arrow4);
+
+    //Arrow: Box 6 to box 7
+        const arrow5 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        const box7 = document.getElementById("box7");
+        const box7Center = getCenter(box7);
+
+        const path5 = `M${box6Center.x},${box6Center.y} 
+                        L${box7Center.x-50},${box7Center.y}`;
+        arrow5.setAttribute("d", path5);
+        arrow5.classList.add("arrow");
+        arrowsContainer.appendChild(arrow5);
+
+        // Arrow: Box 7 to Box 8
+        const arrow6 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    const box8 = document.getElementById("box8");
+    const box8Center = getCenter(box8);
+
+    const path6 = `M${box7Center.x},${box7Center.y} 
+                   L${box8Center.x-50},${box8Center.y}`;
+    arrow6.setAttribute("d", path6);
+    arrow6.classList.add("arrow");
+    arrowsContainer.appendChild(arrow6);
+
+    // Arrow: Box 8 to Box 9
+    const arrow7 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    const box9 = document.getElementById("box9");
+    const box9Center = getCenter(box9);
+
+    const path7 = `M${box8Center.x},${box8Center.y} 
+                   L${box9Center.x-50},${box9Center.y}`;
+    arrow7.setAttribute("d", path7);
+    arrow7.classList.add("arrow");
+    arrowsContainer.appendChild(arrow7);
+
+
+     
+    }
+
+
+    // Initialize the diagram
+    window.addEventListener("load", generateBoxesAndArrows);
+    window.addEventListener("resize", () => {
+      boxesContainer.innerHTML = "";
+      arrowsContainer.innerHTML = "";
+      generateBoxesAndArrows();
+    });
+  </script>
+</body>
+</html>

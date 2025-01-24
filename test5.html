@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Flow Diagram</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      overflow: hidden;
+    }
+
+    .diagram-container {
+      position: relative;
+      width: 90%;
+      height: 90%;
+    }
+
+    .box {
+      position: absolute;
+      background-color: #4CAF50;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 5px;
+      text-align: center;
+      font-size: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .arrow {
+      stroke: #4CAF50;
+      stroke-width: 2;
+      fill: none;
+      marker-end: url(#arrowhead);
+    }
+
+    @media (max-width: 768px) {
+      .box {
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .box {
+        font-size: 0.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="diagram-container">
+    <!-- Boxes will be dynamically generated -->
+    <div id="boxes"></div>
+
+    <!-- SVG for arrows -->
+    <svg>
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#4CAF50" />
+        </marker>
+      </defs>
+      <!-- Arrows will be added dynamically -->
+      <g id="arrows"></g>
+    </svg>
+  </div>
+
+  <script>
+    // Define box positions and sizes as percentages
+    const customPositions = [
+      { id: 'box1', left: '10%', top: '5%', text: 'Start', width: '15%', height: '10%' },
+      { id: 'box2', left: '10%', top: '30%', text: 'Process 1', width: '15%', height: '10%' },
+      { id: 'box3', left: '50%', top: '30%', text: 'Process 2', width: '15%', height: '10%' },
+      { id: 'box4', left: '50%', top: '70%', text: 'End', width: '15%', height: '10%' }
+    ];
+
+    const container = document.querySelector(".diagram-container");
+    const boxesContainer = document.getElementById("boxes");
+    const arrowsContainer = document.getElementById("arrows");
+
+    // Helper function to get the center of an element
+    function getCenter(element) {
+      const rect = element.getBoundingClientRect();
+      const parentRect = element.parentElement.getBoundingClientRect();
+      return {
+        x: rect.left + rect.width / 2 - parentRect.left,
+        y: rect.top + rect.height / 2 - parentRect.top
+      };
+    }
+
+    // Function to generate boxes and arrows
+    function generateBoxesAndArrows() {
+      customPositions.forEach((pos) => {
+        const box = document.createElement("div");
+        box.classList.add("box");
+        box.id = pos.id;
+        box.innerText = pos.text;
+        box.style.width = pos.width;
+        box.style.height = pos.height;
+        box.style.left = pos.left;
+        box.style.top = pos.top;
+
+        boxesContainer.appendChild(box);
+      });
+
+      // Draw arrows
+      const box1 = document.getElementById("box1");
+      const box2 = document.getElementById("box2");
+      const box3 = document.getElementById("box3");
+      const box4 = document.getElementById("box4");
+
+      const arrow1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      const arrow2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      const arrow3 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+
+      const startCenter = getCenter(box1);
+      const process1Center = getCenter(box2);
+      const process2Center = getCenter(box3);
+      const endCenter = getCenter(box4);
+
+      // Set arrow positions
+      arrow1.setAttribute("x1", startCenter.x);
+      arrow1.setAttribute("y1", startCenter.y + box1.offsetHeight / 2);
+      arrow1.setAttribute("x2", process1Center.x);
+      arrow1.setAttribute("y2", process1Center.y - box2.offsetHeight / 2);
+      arrow1.classList.add("arrow");
+
+      arrow2.setAttribute("x1", process1Center.x + box2.offsetWidth / 2);
+      arrow2.setAttribute("y1", process1Center.y);
+      arrow2.setAttribute("x2", process2Center.x - box3.offsetWidth / 2);
+      arrow2.setAttribute("y2", process2Center.y);
+      arrow2.classList.add("arrow");
+
+      arrow3.setAttribute("x1", process2Center.x);
+      arrow3.setAttribute("y1", process2Center.y + box3.offsetHeight / 2);
+      arrow3.setAttribute("x2", endCenter.x);
+      arrow3.setAttribute("y2", endCenter.y - box4.offsetHeight / 2);
+      arrow3.classList.add("arrow");
+
+      arrowsContainer.appendChild(arrow1);
+      arrowsContainer.appendChild(arrow2);
+      arrowsContainer.appendChild(arrow3);
+    }
+
+    // Initialize the diagram
+    window.addEventListener("load", generateBoxesAndArrows);
+    window.addEventListener("resize", () => {
+      boxesContainer.innerHTML = "";
+      arrowsContainer.innerHTML = "";
+      generateBoxesAndArrows();
+    });
+  </script>
+</body>
+</html>

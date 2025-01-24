@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Flow Diagram</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      overflow: hidden;
+    }
+
+    .diagram-container {
+      position: relative;
+      width: 90%;
+      height: 90%;
+    }
+
+    .box {
+      position: absolute;
+      width: 15%;
+      height: 10%;
+      background-color: #4CAF50;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      cursor: move;
+      font-size: 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .box:hover {
+      transform: scale(1.05);
+    }
+
+    svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .arrow {
+      stroke: #4CAF50;
+      stroke-width: 2;
+      fill: none;
+      marker-end: url(#arrowhead);
+    }
+
+    @media (max-width: 768px) {
+      .box {
+        width: 20%;
+        height: 12%;
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .box {
+        width: 30%;
+        height: 15%;
+        font-size: 0.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="diagram-container">
+    <!-- Boxes -->
+    <div class="box" style="top: 5%; left: 10%;">Start</div>
+    <div class="box" style="top: 25%; left: 10%;">Process 1</div>
+    <div class="box" style="top: 25%; left: 40%;">Process 2</div>
+    <div class="box" style="top: 60%; left: 50%;">Process 3</div>
+    <div class="box" style="top: 45%; left: 40%;">End</div>
+
+    <!-- SVG for arrows -->
+    <svg>
+      <!-- Arrow markers -->
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+                refX="10" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#4CAF50" />
+        </marker>
+      </defs>
+      <!-- Arrows -->
+      <line x1="15%" y1="15%" x2="15%" y2="25%" class="arrow" />
+      <line x1="15%" y1="30%" x2="45%" y2="30%" class="arrow" />
+      <line x1="45%" y1="35%" x2="45%" y2="50%" class="arrow" />
+      <line x1="50%" y1="55%" x2="55%" y2="65%" class="arrow" />
+    </svg>
+  </div>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flow Diagram with Resizable Boxes</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+
+    .diagram-container {
+      position: relative;
+      width: 100%;
+      max-width: 90vw;
+      height: 100%;
+      max-height: 90vh;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      overflow: hidden;
+    }
+
+    .box {
+      position: absolute;
+      background-color: #4CAF50;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 5px;
+      text-align: center;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .arrow {
+      stroke: #4CAF50;
+      stroke-width: 2;
+      fill: none;
+      marker-end: url(#arrowhead);
+    }
+  </style>
+</head>
+<body>
+  <div class="diagram-container">
+    <!-- Dynamically generated boxes -->
+    <div id="boxes"></div>
+
+    <!-- SVG for arrows -->
+    <svg>
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#4CAF50" />
+        </marker>
+      </defs>
+      <!-- Arrows will be added dynamically -->
+      <g id="arrows"></g>
+    </svg>
+  </div>
+
+  <script>
+    const totalBoxes = 50; // Change this number to add more boxes
+    const container = document.querySelector(".diagram-container");
+    const boxesContainer = document.getElementById("boxes");
+    const arrowsContainer = document.getElementById("arrows");
+
+    const positions = []; // Array to store positions of all boxes
+
+    function generateBoxesAndLayout() {
+      const containerWidth = container.clientWidth;
+      const containerHeight = container.clientHeight;
+
+      const boxSize = Math.min(containerWidth, containerHeight) / Math.sqrt(totalBoxes) - 20; // Scale box size
+      const cols = Math.ceil(Math.sqrt(totalBoxes));
+      const rows = Math.ceil(totalBoxes / cols);
+
+      const gridWidth = cols * boxSize;
+      const gridHeight = rows * boxSize;
+      const offsetX = (containerWidth - gridWidth) / 2;
+      const offsetY = (containerHeight - gridHeight) / 2;
+
+      for (let i = 1; i <= totalBoxes; i++) {
+        const col = (i - 1) % cols;
+        const row = Math.floor((i - 1) / cols);
+
+        const left = offsetX + col * boxSize;
+        const top = offsetY + row * boxSize;
+
+        const box = document.createElement("div");
+        box.classList.add("box");
+        box.id = `box${i}`;
+        box.innerText = `Step ${i}`;
+        box.style.width = `${boxSize - 10}px`;
+        box.style.height = `${boxSize - 10}px`;
+        box.style.left = `${left}px`;
+        box.style.top = `${top}px`;
+
+        positions.push({ id: `box${i}`, left, top });
+        boxesContainer.appendChild(box);
+      }
+    }
+
+    function drawArrows() {
+      arrowsContainer.innerHTML = ""; // Clear existing arrows
+      for (let i = 1; i < totalBoxes; i++) {
+        const fromBox = document.getElementById(`box${i}`);
+        const toBox = document.getElementById(`box${i + 1}`);
+
+        const fromRect = fromBox.getBoundingClientRect();
+        const toRect = toBox.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+
+        const x1 = fromRect.left + fromRect.width / 2 - containerRect.left;
+        const y1 = fromRect.top + fromRect.height / 2 - containerRect.top;
+        const x2 = toRect.left + toRect.width / 2 - containerRect.left;
+        const y2 = toRect.top + toRect.height / 2 - containerRect.top;
+
+        const arrow = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        arrow.setAttribute("x1", x1);
+        arrow.setAttribute("y1", y1);
+        arrow.setAttribute("x2", x2);
+        arrow.setAttribute("y2", y2);
+        arrow.classList.add("arrow");
+
+        arrowsContainer.appendChild(arrow);
+      }
+    }
+
+    function initDiagram() {
+      generateBoxesAndLayout();
+      drawArrows();
+    }
+
+    // Initialize the diagram on load
+    window.addEventListener("load", initDiagram);
+
+    // Redraw the diagram on window resize
+    window.addEventListener("resize", () => {
+      boxesContainer.innerHTML = "";
+      positions.length = 0;
+      initDiagram();
+    });
+  </script>
+</body>
+</html>

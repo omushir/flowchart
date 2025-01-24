@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flow Diagram</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+
+    .diagram-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .box {
+      position: absolute;
+      width: 150px;
+      height: 100px;
+      background-color: #4CAF50;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      cursor: move;
+    }
+
+    svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .arrow {
+      stroke: #4CAF50;
+      stroke-width: 2;
+      fill: none;
+      marker-end: url(#arrowhead);
+    }
+  </style>
+</head>
+<body>
+  <div class="diagram-container">
+    <!-- Boxes -->
+    <div class="box" style="top: 50px; left: 100px;">Start</div>
+    <div class="box" style="top: 200px; left: 100px;">Process 1</div>
+    <div class="box" style="top: 200px; left: 300px;">Process 2</div>
+    <div class="box" style="top: 500px; left: 500px;">Process 3</div>
+    <div class="box" style="top: 350px; left: 300px;">End</div>
+
+    <!-- SVG for arrows -->
+    <svg>
+      <!-- Arrow markers -->
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+                refX="10" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#4CAF50" />
+        </marker>
+      </defs>
+      <!-- Arrows -->
+      <line x1="175" y1="150" x2="175" y2="200" class="arrow" />
+      <line x1="175" y1="250" x2="325" y2="250" class="arrow" />
+      <line x1="325" y1="300" x2="325" y2="350" class="arrow" />
+      <line x1="380" y1="450" x2="500" y2="550" class="arrow" />
+    </svg>
+  </div>
+</body>
+</html>

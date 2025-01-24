@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Flow Diagram</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      overflow: hidden;
+    }
+
+    .diagram-container {
+      position: relative;
+      width: 90%;
+      height: 90%;
+    }
+
+    .box {
+      position: absolute;
+      width: 150px;
+      height: 100px;
+      background-color: #4CAF50;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .arrow {
+      stroke: #4CAF50;
+      stroke-width: 2;
+      fill: none;
+      marker-end: url(#arrowhead);
+    }
+
+    @media (max-width: 768px) {
+      .box {
+        width: 120px;
+        height: 80px;
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .box {
+        width: 100px;
+        height: 70px;
+        font-size: 0.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="diagram-container">
+    <!-- Boxes -->
+    <div class="box" id="box1" style="top: 5%; left: 10%;">Start</div>
+    <div class="box" id="box2" style="top: 30%; left: 10%;">Process 1</div>
+    <div class="box" id="box3" style="top: 30%; left: 50%;">Process 2</div>
+    <div class="box" id="box4" style="top: 70%; left: 50%;">End</div>
+
+    <!-- SVG for arrows -->
+    <svg>
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+                refX="10" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#4CAF50" />
+        </marker>
+      </defs>
+      <!-- Arrows -->
+      <line id="arrow1" class="arrow" />
+      <line id="arrow2" class="arrow" />
+      <line id="arrow3" class="arrow" />
+    </svg>
+  </div>
+
+  <script>
+    function calculateArrowPositions() {
+      const box1 = document.getElementById("box1");
+      const box2 = document.getElementById("box2");
+      const box3 = document.getElementById("box3");
+      const box4 = document.getElementById("box4");
+
+      const arrow1 = document.getElementById("arrow1");
+      const arrow2 = document.getElementById("arrow2");
+      const arrow3 = document.getElementById("arrow3");
+
+      // Helper function to get center of a box
+      function getCenter(element) {
+        const rect = element.getBoundingClientRect();
+        return {
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+        };
+      }
+
+      // Calculate centers of each box
+      const startCenter = getCenter(box1);
+      const process1Center = getCenter(box2);
+      const process2Center = getCenter(box3);
+      const endCenter = getCenter(box4);
+
+      // Set arrow positions
+      arrow1.setAttribute("x1", startCenter.x);
+      arrow1.setAttribute("y1", startCenter.y + 50); // Bottom of box1
+      arrow1.setAttribute("x2", process1Center.x);
+      arrow1.setAttribute("y2", process1Center.y - 50); // Top of box2
+
+      arrow2.setAttribute("x1", process1Center.x + 75); // Right of box2
+      arrow2.setAttribute("y1", process1Center.y);
+      arrow2.setAttribute("x2", process2Center.x - 75); // Left of box3
+      arrow2.setAttribute("y2", process2Center.y);
+
+      arrow3.setAttribute("x1", process2Center.x);
+      arrow3.setAttribute("y1", process2Center.y + 50); // Bottom of box3
+      arrow3.setAttribute("x2", endCenter.x);
+      arrow3.setAttribute("y2", endCenter.y - 50); // Top of box4
+    }
+
+    // Calculate arrow positions on load and on resize
+    window.addEventListener("load", calculateArrowPositions);
+    window.addEventListener("resize", calculateArrowPositions);
+  </script>
+</body>
+</html>

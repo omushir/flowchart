@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Flow Diagram</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      overflow: hidden;
+    }
+
+    .diagram-container {
+      position: relative;
+      width: 90%;
+      height: 90%;
+    }
+
+    .box {
+      position: absolute;
+      background-color: #4CAF50;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 5px;
+      text-align: center;
+      font-size: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .arrow {
+      stroke: #4CAF50;
+      stroke-width: 2;
+      fill: none;
+      marker-end: url(#arrowhead);
+    }
+
+    @media (max-width: 768px) {
+      .box {
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .box {
+        font-size: 0.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="diagram-container">
+    <!-- Boxes will be dynamically generated -->
+    <div id="boxes"></div>
+
+    <!-- SVG for arrows -->
+    <svg>
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#4CAF50" />
+        </marker>
+      </defs>
+      <!-- Arrows will be added dynamically -->
+      <g id="arrows"></g>
+    </svg>
+  </div>
+
+  <script>
+    // Define box positions and sizes as percentages
+    const customPositions = [
+      // Level 1 (4 boxes)
+      { id: 'box1', left: '10%', top: '5%', text: 'Box 1 (L1)', width: '15%', height: '10%' },
+      { id: 'box2', left: '30%', top: '5%', text: 'Box 2 (L1)', width: '15%', height: '10%' },
+      { id: 'box3', left: '50%', top: '5%', text: 'Box 3 (L1)', width: '15%', height: '10%' },
+      { id: 'box4', left: '70%', top: '5%', text: 'Box 4 (L1)', width: '15%', height: '10%' },
+      // Box 5 below Box 1 (L1)
+      { id: 'box5', left: '10%', top: '20%', text: 'Box 5 (L1)', width: '15%', height: '10%' }
+    ];
+
+    const container = document.querySelector(".diagram-container");
+    const boxesContainer = document.getElementById("boxes");
+    const arrowsContainer = document.getElementById("arrows");
+
+    // Helper function to get the center of an element
+    function getCenter(element) {
+      const rect = element.getBoundingClientRect();
+      const parentRect = element.parentElement.getBoundingClientRect();
+      return {
+        x: rect.left + rect.width / 2 - parentRect.left,
+        y: rect.top + rect.height / 2 - parentRect.top
+      };
+    }
+
+    // Function to generate boxes and arrows
+    function generateBoxesAndArrows() {
+      customPositions.forEach((pos) => {
+        const box = document.createElement("div");
+        box.classList.add("box");
+        box.id = pos.id;
+        box.innerText = pos.text;
+        box.style.width = pos.width;
+        box.style.height = pos.height;
+        box.style.left = pos.left;
+        box.style.top = pos.top;
+
+        boxesContainer.appendChild(box);
+      });
+
+      // Draw arrows with curves
+      const box1 = document.getElementById("box1"); // Box 1 (L1)
+      const box2 = document.getElementById("box2"); // Box 2 (L1)
+      const box3 = document.getElementById("box3"); // Box 3 (L1)
+      const box4 = document.getElementById("box4"); // Box 4 (L1)
+      const box5 = document.getElementById("box5"); // Box 5 below Box 1 (L1)
+
+      const arrow1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+
+      const box3Center = getCenter(box3); // Box 3 center (L1)
+      const box5Center = getCenter(box5); // Box 5 center (L1)
+
+      // Create an arrow with 90-degree bend (first vertical then horizontal)
+      const path1 = `M${box3Center.x},${box3Center.y + box3.offsetHeight / 2} 
+                     L${box3Center.x},${box5Center.y} 
+                     L${box5Center.x},${box5Center.y}`;
+
+      // Set the path for the arrow
+      arrow1.setAttribute("d", path1);
+      arrow1.classList.add("arrow");
+
+      arrowsContainer.appendChild(arrow1);
+    }
+
+    // Initialize the diagram
+    window.addEventListener("load", generateBoxesAndArrows);
+    window.addEventListener("resize", () => {
+      boxesContainer.innerHTML = "";
+      arrowsContainer.innerHTML = "";
+      generateBoxesAndArrows();
+    });
+  </script>
+</body>
+</html>
