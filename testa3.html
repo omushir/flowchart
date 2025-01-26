@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connect Boxes to a Common Line</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f9f9f9;
+    }
+    #container {
+      position: relative;
+      width: 800px;
+      height: 600px;
+      border: 1px solid #ddd;
+      background-color: #fff;
+    }
+    .box {
+      width: 100px;
+      height: 50px;
+      background-color: #4CAF50;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 5px;
+      position: absolute;
+    }
+    #box1 { top: 50px; left: 100px; }
+    #box2 { top: 50px; left: 300px; }
+    #box3 { top: 50px; left: 500px; }
+    #box6 { top: 450px; left: 650px; }
+    .arrow {
+      fill: none;
+      stroke: #000;
+      stroke-width: 2;
+      marker-end: url(#arrowhead);
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <!-- Boxes -->
+    <div id="box1" class="box">Box 1</div>
+    <div id="box2" class="box">Box 2</div>
+    <div id="box3" class="box">Box 3</div>
+    <div id="box6" class="box">Box 6</div>
+
+    <!-- SVG for arrows -->
+    <svg id="arrows" width="100%" height="100%" style="position: absolute; top: 0; left: 0;">
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#000"></polygon>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <script>
+    // Helper function to get the center of a box
+    function getCenter(element) {
+      const rect = element.getBoundingClientRect();
+      const containerRect = document.getElementById("container").getBoundingClientRect();
+      return {
+        x: rect.left - containerRect.left + rect.width / 2,
+        y: rect.top - containerRect.top + rect.height / 2
+      };
+    }
+
+    // Add a common line (horizontal)
+    const arrowsContainer = document.getElementById("arrows");
+    const commonLineY = 300; // Fixed Y position for the common line
+
+    // Function to connect a box to the common line
+    function connectToCommonLine(box, targetX) {
+      const boxCenter = getCenter(box);
+
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      const d = `M${boxCenter.x},${boxCenter.y}
+                 L${boxCenter.x},${commonLineY} 
+                 L${targetX},${commonLineY}`;
+      path.setAttribute("d", d);
+      path.classList.add("arrow");
+      arrowsContainer.appendChild(path);
+    }
+
+    // Draw the common line (optional visual representation)
+    function drawCommonLine(startX, endX) {
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", startX);
+      line.setAttribute("y1", commonLineY);
+      line.setAttribute("x2", endX);
+      line.setAttribute("y2", commonLineY);
+      line.setAttribute("stroke", "#4CAF50");
+      line.setAttribute("stroke-width", "2");
+      arrowsContainer.appendChild(line);
+    }
+
+    // Main Execution
+    const commonLineStartX = 200;
+    const commonLineEndX = 600;
+
+    // Draw the horizontal common line
+    drawCommonLine(commonLineStartX, commonLineEndX);
+
+    // Connect boxes to the common line
+    const box1 = document.getElementById("box1");
+    const box2 = document.getElementById("box2");
+    const box3 = document.getElementById("box3");
+    connectToCommonLine(box1, commonLineStartX + 50);
+    connectToCommonLine(box2, commonLineStartX + 150);
+    connectToCommonLine(box3, commonLineStartX + 250);
+
+    // Extend the flow by connecting the common line to another box
+    const box6 = document.getElementById("box6");
+    const pathToBox6 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    const box6Center = getCenter(box6);
+    const path6 = `M${commonLineEndX},${commonLineY}
+                   L${commonLineEndX},${box6Center.y}
+                   L${box6Center.x},${box6Center.y}`;
+    pathToBox6.setAttribute("d", path6);
+    pathToBox6.classList.add("arrow");
+    arrowsContainer.appendChild(pathToBox6);
+  </script>
+</body>
+</html>

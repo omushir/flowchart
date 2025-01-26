@@ -1,0 +1,50 @@
+// Add a common line (horizontal)
+const commonLineY = 300; // Fixed Y position for the common line
+
+// Function to connect a box to the common line
+function connectToCommonLine(box, targetX) {
+  const boxCenter = getCenter(box);
+
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  const d = `M${boxCenter.x},${boxCenter.y}
+             L${boxCenter.x},${commonLineY} 
+             L${targetX},${commonLineY}`;
+  path.setAttribute("d", d);
+  path.classList.add("arrow");
+  arrowsContainer.appendChild(path);
+}
+
+// Draw the common line (optional visual representation)
+function drawCommonLine(startX, endX) {
+  const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  line.setAttribute("x1", startX);
+  line.setAttribute("y1", commonLineY);
+  line.setAttribute("x2", endX);
+  line.setAttribute("y2", commonLineY);
+  line.setAttribute("stroke", "#4CAF50");
+  line.setAttribute("stroke-width", "2");
+  arrowsContainer.appendChild(line);
+}
+
+// Call this in your main function
+const commonLineStartX = 200;
+const commonLineEndX = 600;
+
+// Draw the horizontal common line
+drawCommonLine(commonLineStartX, commonLineEndX);
+
+// Connect boxes to the common line
+connectToCommonLine(box1, commonLineStartX + 50);
+connectToCommonLine(box2, commonLineStartX + 150);
+connectToCommonLine(box3, commonLineStartX + 250);
+
+// Extend the flow by connecting the common line to another box
+const box6 = document.getElementById("box6");
+const pathToBox6 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+const box6Center = getCenter(box6);
+const path6 = `M${commonLineEndX},${commonLineY}
+               L${commonLineEndX},${box6Center.y}
+               L${box6Center.x},${box6Center.y}`;
+pathToBox6.setAttribute("d", path6);
+pathToBox6.classList.add("arrow");
+arrowsContainer.appendChild(pathToBox6);
