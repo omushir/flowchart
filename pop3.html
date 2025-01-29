@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Flow Diagram</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      overflow: hidden;
+    }
+
+    .diagram-container {
+      position: relative;
+      width: 90%;
+      height: 90%;
+    }
+
+    .box {
+      position: absolute;
+      background-color: #4CAF50;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      text-align: center;
+      font-size: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+    }
+
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      text-align: center;
+      z-index: 1000;
+      width: 50%;
+    }
+
+    .popup table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .popup th, .popup td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .popup th {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .popup button {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+  <div class="diagram-container">
+    <div id="boxes"></div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+  <div class="popup" id="popup">
+    <h3 id="popup-title"></h3>
+    <table id="popup-table">
+      <thead>
+        <tr>
+          <th>Column 1</th>
+          <th>Column 2</th>
+          <th>Column 3</th>
+        </tr>
+      </thead>
+      <tbody id="popup-body"></tbody>
+    </table>
+    <button onclick="closePopup()">Close</button>
+  </div>
+
+  <script>
+    // Define box positions and table data
+    const customPositions = [
+      { id: 'box1', left: '5%', top: '10%', text: 'Box 1', width: '10%', height: '10%', 
+        details: [
+          ["Row 1A", "Row 1B", "Row 1C"],
+          ["Row 2A", "Row 2B", "Row 2C"],
+          ["Row 3A", "Row 3B", "Row 3C"]
+        ]
+      },
+      { id: 'box2', left: '20%', top: '10%', text: 'Box 2', width: '10%', height: '10%', 
+        details: [
+          ["Data A1", "Data B1", "Data C1"],
+          ["Data A2", "Data B2", "Data C2"],
+          ["Data A3", "Data B3", "Data C3"]
+        ]
+      },
+      { id: 'box3', left: '35%', top: '10%', text: 'Box 3', width: '10%', height: '10%', 
+        details: [
+          ["Item 1", "Item 2", "Item 3"],
+          ["Item 4", "Item 5", "Item 6"],
+          ["Item 7", "Item 8", "Item 9"]
+        ]
+      },
+      { id: 'box5', left: '5%', top: '30%', text: 'Box 8(5)', width: '10%', height: '10%', 
+        details: [
+          ["Step A", "Step B", "Step C"],
+          ["Step D", "Step E", "Step F"],
+          ["Step G", "Step H", "Step I"]
+        ]
+      }
+    ];
+
+    const boxesContainer = document.getElementById("boxes");
+
+    function generateBoxes() {
+      customPositions.forEach((pos) => {
+        const box = document.createElement("div");
+        box.classList.add("box");
+        box.id = pos.id;
+        box.innerText = pos.text;
+        box.style.width = pos.width;
+        box.style.height = pos.height;
+        box.style.left = pos.left;
+        box.style.top = pos.top;
+
+        // Open popup with table data
+        box.onclick = () => openPopup(pos.text, pos.details);
+        boxesContainer.appendChild(box);
+      });
+    }
+
+    function openPopup(title, tableData) {
+      document.getElementById("popup-title").innerText = title;
+      
+      const tableBody = document.getElementById("popup-body");
+      tableBody.innerHTML = "";  // Clear previous table content
+
+      tableData.forEach(row => {
+        let tr = document.createElement("tr");
+        row.forEach(cell => {
+          let td = document.createElement("td");
+          td.innerText = cell;
+          tr.appendChild(td);
+        });
+        tableBody.appendChild(tr);
+      });
+
+      document.getElementById("popup").style.display = "block";
+      document.getElementById("overlay").style.display = "block";
+    }
+
+    function closePopup() {
+      document.getElementById("popup").style.display = "none";
+      document.getElementById("overlay").style.display = "none";
+    }
+
+    window.addEventListener("load", generateBoxes);
+  </script>
+</body>
+</html>
