@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Flow Diagram with Timeline</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+
+        .timeline-container {
+            position: relative;
+            width: 90%;
+            height: 50px;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-marker {
+            position: absolute;
+            height: 20px;
+            width: 2px;
+            background: #4CAF50;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .timeline-label {
+            font-size: 0.8rem;
+            color: #333;
+            position: absolute;
+            top: 30px;
+            transform: translateX(-50%);
+        }
+
+        .diagram-container {
+            position: relative;
+            width: 90%;
+            height: 80%;
+        }
+
+        .box {
+            position: absolute;
+            background-color: #4CAF50;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100px;
+            height: 50px;
+        }
+
+        svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .arrow {
+            stroke: #4CAF50;
+            stroke-width: 2;
+            fill: none;
+            marker-end: url(#arrowhead);
+        }
+
+        @media (max-width: 768px) {
+            .box {
+                font-size: 0.8rem;
+                width: 80px;
+                height: 40px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .box {
+                font-size: 0.6rem;
+                width: 60px;
+                height: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="timeline-container" id="timeline"></div>
+    <div class="diagram-container">
+        <div id="boxes"></div>
+        <svg>
+            <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#4CAF50" />
+                </marker>
+            </defs>
+            <g id="arrows"></g>
+        </svg>
+    </div>
+
+    <script>
+        const startDate = new Date("2025-02-27");
+        const endDate = new Date("2025-04-24");
+        const totalDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
+        const timeline = document.getElementById("timeline");
+        const boxesContainer = document.getElementById("boxes");
+        const arrowsContainer = document.getElementById("arrows");
+
+        const milestones = [
+            { date: "2025-02-27", label: "Start", x: 10, y: 50 },
+            { date: "2025-03-10", label: "Phase 1", x: 30, y: 150 },
+            { date: "2025-03-20", label: "Phase 2", x: 50, y: 250 },
+            { date: "2025-04-10", label: "Final Review", x: 70, y: 350 },
+            { date: "2025-04-24", label: "Completion", x: 90, y: 450 }
+        ];
+
+        function createTimeline() {
+            milestones.forEach(milestone => {
+                let marker = document.createElement("div");
+                marker.classList.add("timeline-marker");
+                const date = new Date(milestone.date);
+                const diffDays = (date - startDate) / (1000 * 60 * 60 * 24);
+                marker.style.left = `${(diffDays / totalDays) * 100}%`;
+                
+                let label = document.createElement("div");
+                label.classList.add("timeline-label");
+                label.textContent = `${date.getDate()}/${date.getMonth() + 1}`;
+                label.style.left = marker.style.left;
+                
+                timeline.appendChild(marker);
+                timeline.appendChild(label);
+            });
+        }
+
+        function createBoxes() {
+            milestones.forEach((milestone, index) => {
+                let box = document.createElement("div");
+                box.classList.add("box");
+                box.textContent = milestone.label;
+                box.style.left = `${milestone.x}%`;
+                box.style.top = `${milestone.y}px`;
+                boxesContainer.appendChild(box);
+                
+                if (index > 0) {
+                    let line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    line.setAttribute("x1", `${milestones[index - 1].x}%`);
+                    line.setAttribute("y1", `${milestones[index - 1].y + 25}`);
+                    line.setAttribute("x2", `${milestone.x}%`);
+                    line.setAttribute("y2", `${milestone.y + 25}`);
+                    line.classList.add("arrow");
+                    arrowsContainer.appendChild(line);
+                }
+            });
+        }
+
+        createTimeline();
+        createBoxes();
+    </script>
+</body>
+</html>
